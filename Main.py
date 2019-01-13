@@ -57,7 +57,51 @@ while x < len(andListNew):
 
 #Creates tumblr client
 client = pytumblr.TumblrRestClient(
-        
-        
-        
+        'l3FxwH8VFOe3hFACwd5bXcM2A69eN40KQGYrK6MNMUjzfu07Ye',
+        'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
+posts = []
+max_calls = 10
+
+last_timestamp = int(time.time())
+for _ in range(max_calls):
+    posts.extend(client.tagged('goals', limit=20, filter='text', before=last_timestamp))
+    last_timestamp = posts[-1]['timestamp']
+
+
+# massage the data into a consistent dictionary
+content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 'description', 'chat': 'body',
+           'audio': 'caption', 'video': 'caption', 'answer': 'answer'}
+output_list = []
+add_this_item = False
+or_tags = ['food', 'fit', 'weight', 'health', 'life']
+
+for p in posts:
+    print(1)
+    for t in or_tags:
+        if t in p['tags']:
+            output_list.append(
+                {
+                    'content': p[content_key_map[p['type']]],
+                    'date': datetime.utcfromtimestamp(int(p['timestamp'])).strftime('%Y-%m-%d'),
+                    'time': datetime.utcfromtimestamp(int(p['timestamp'])).strftime('%H:%M:%S'),
+                    'tags': p['tags'],
+                    'id': p['id'],
+                    'blog_name': p['blog_name'],
+                    'post_url': p['post_url'],
+                    'type': p['type']
+                }
+            )
+            break
+
+
+# write the output to csv
+
+with open('output_data.csv', 'w', newline='') as csvfile:
+    fieldnames = ['content', 'date', 'time', 'tags', 'id', 'blog_name', 'post_url', 'type']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+    writer.writeheader()
+    for p in output_list:
+        writer.writerow(p)
+    
