@@ -12,6 +12,7 @@ import csv
 import sys
 import codecs
 import functions as f
+import unidecode
 
 
 #reload(sys)
@@ -21,6 +22,7 @@ import functions as f
 filename = "C:\Users\Chaitu Konjeti\CDCTweets\Keywords.txt"
 
 keywords = f.sortKeyword(filename)
+keywords = [repr(s) for s in keywords]
 
 #Creates tumblr client
 client = pytumblr.TumblrRestClient(
@@ -28,12 +30,15 @@ client = pytumblr.TumblrRestClient(
         'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
 posts = []
-max_calls = 5
-
+max_calls = 3
+i = 0
 last_timestamp = int(time.time())
-for _ in range(max_calls):
-    posts.extend(client.tagged('depression', limit=20, filter='text', before=last_timestamp))
-    last_timestamp = posts[-1]['timestamp']
+for i in range(3):
+    for _ in range(max_calls):
+        #print((keywords[i]).encode('utf-8').replace('\\x92',"'"))
+        posts.extend(client.tagged(keywords[i], limit=20, filter='text', before=last_timestamp))
+        #posts = [repr(s).encode('utf-8').replace('\\x92',"'") for s in posts]
+        last_timestamp = posts[-1]['timestamp']
 
 
 # massage the data into a consistent dictionary
@@ -41,16 +46,16 @@ content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 
            'audio': 'caption', 'video': 'caption', 'answer': 'answer'}
 output_list = []
 add_this_item = False
-tumblrKeywords = ['depression']
+
+print(repr(posts[0]).encode('utf-8').replace('\\x92',"'"))
 
 for p in posts:
 #    print(p)
 #    print('--------------------------------------------')
-    for t in tumblrKeywords:
+    for t in keywords:
         #print(repr(p[content_key_map[p['type']]])).encode('utf-8')
         ("--------------------------------------")
         if t in (p[content_key_map[p['type']]]):
-            
             output_list.append(
                 {
                     'content': p[content_key_map[p['type']]],
@@ -66,7 +71,7 @@ for p in posts:
             )
             break
 
-print(output_list)
+#print(output_list)
 
 outputFileName = "output_got.csv"
 outputFile = codecs.open(outputFileName, "w+", "utf-8")
