@@ -6,12 +6,15 @@ Created on Sun Jan 13 14:05:09 2019
 """
 
 import pytumblr
-import os
 import time
 from datetime import datetime
 import csv
 import re
+import sys
 
+
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 #opens file and splits every word by the delimiter OR
 filename = "C:\Users\Chaitu Konjeti\CDCTweets\Keywords.txt"
@@ -77,7 +80,6 @@ add_this_item = False
 or_tags = ['food', 'fit', 'weight', 'health', 'life']
 
 for p in posts:
-    print(1)
     for t in or_tags:
         if t in p['tags']:
             output_list.append(
@@ -97,11 +99,15 @@ for p in posts:
 
 # write the output to csv
 
-with open('output_data.csv', 'w', newline='') as csvfile:
+with open('output_data.csv', 'w') as csvfile:
     fieldnames = ['content', 'date', 'time', 'tags', 'id', 'blog_name', 'post_url', 'type']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
 
     writer.writeheader()
     for p in output_list:
-        writer.writerow(p)
+        print(p)
+        print('--------------------------------')
+        #writer.writerow(repr(p))
+#        f.session.execute(p)
+#        f.session.commit()
     
