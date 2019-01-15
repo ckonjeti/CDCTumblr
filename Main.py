@@ -65,7 +65,7 @@ client = pytumblr.TumblrRestClient(
         'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
 posts = []
-max_calls = 10
+max_calls = 5
 
 last_timestamp = int(time.time())
 for _ in range(max_calls):
@@ -81,8 +81,12 @@ add_this_item = False
 or_tags = ['food', 'fit', 'weight', 'health', 'life']
 
 for p in posts:
+    print(p)
+    print('--------------------------------------------')
     for t in or_tags:
+        
         if t in p['tags']:
+            
             output_list.append(
                 {
                     'content': p[content_key_map[p['type']]],
@@ -103,32 +107,14 @@ outputFileName = "output_got.csv"
 outputFile = codecs.open(outputFileName, "w+", "utf-8")
 dataWriter = csv.writer(outputFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-#dataWriter.writeheader()
-i=0
+
+i = 0
 for p in output_list:
     row = [repr(s).encode("utf-8") for s in [keywords[i], p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
     dataWriter.writerow(row)
     i += 0
         
-        #writer.writerow(repr(p))
-#        f.session.execute(p)
-#        f.session.commit()
-#tweetCriteria = got.manager.TweetCriteria().setQuerySearch(keywords[i]).setMaxTweets(5)
-#tweet = got.manager.TweetManager.getTweets(tweetCriteria)[j] 
-#row = [repr(s).encode("utf-8") for s in [keywords[i], p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
-##print(tweet)
-#dataWriter.writerow(row)
+        
 
-# write the output to csv
-with open('output_data.csv', 'w') as csvfile:
-    fieldnames = ['content', 'date', 'time', 'tags', 'id', 'blog_name', 'post_url', 'type']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
 
-    writer.writeheader()
-    for p in output_list:
-        print(p['content'])
-        print('--------------------------------')
-        #writer.writerow(repr(p))
-#        f.session.execute(p)
-#        f.session.commit()
     
