@@ -9,9 +9,9 @@ import pytumblr
 import time
 from datetime import datetime
 import csv
-import re
 import sys
 import codecs
+import functions as f
 
 
 #reload(sys)
@@ -20,44 +20,7 @@ import codecs
 #opens file and splits every word by the delimiter OR
 filename = "C:\Users\Chaitu Konjeti\CDCTweets\Keywords.txt"
 
-
-#final sorted list
-keywords = []
-
-#lists used during sorting
-preKeywords = []
-andList = []
-andListNew = []
-
-#sorts into AND and not AND sections
-with open(filename, 'r') as f:
-    for line in f:
-        for word in re.split('\(\(|\)\)',line):
-            if str(word).find('AND') > 0:
-                andList.append(str(word))
-            elif word != ' OR ':
-                preKeywords.append(word)
-                
-#sorts the non AND section and appends the final product to keywords
-for x in preKeywords:
-    for x in (x.split(' OR ')):
-        if x != '':            
-            keywords.append(str(x.replace("\"","")))
-            
-#sorts the AND section into groups            
-for x in andList:
-    for y in x.split(' AND '):
-        andListNew.append(y.replace("(","").replace(")","").replace("\"","").split(" OR "))
-     
-#sorts the AND section groups and appends the final product to keywords
-x = 0
-while x < len(andListNew):
-    if x % 2 == 0:
-        for z in andListNew[x]:
-            for y in range(len(andListNew[x + 1])):
-                keywords.append((z + ' ' + andListNew[x + 1][y]))
-    x += 1             
-
+keywords = f.sortKeyword(filename)
 
 #Creates tumblr client
 client = pytumblr.TumblrRestClient(
@@ -69,7 +32,7 @@ max_calls = 5
 
 last_timestamp = int(time.time())
 for _ in range(max_calls):
-    posts.extend(client.tagged('goals', limit=20, filter='text', before=last_timestamp))
+    posts.extend(client.tagged('depression', limit=20, filter='text', before=last_timestamp))
     last_timestamp = posts[-1]['timestamp']
 
 
@@ -78,15 +41,16 @@ content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 
            'audio': 'caption', 'video': 'caption', 'answer': 'answer'}
 output_list = []
 add_this_item = False
-tumblrKeywords = [keywords[0]]
+tumblrKeywords = ['depression']
 
 for p in posts:
 #    print(p)
 #    print('--------------------------------------------')
     for t in tumblrKeywords:
         #print(repr(p[content_key_map[p['type']]])).encode('utf-8')
+        ("--------------------------------------")
         if t in (p[content_key_map[p['type']]]):
-            print(t)
+            
             output_list.append(
                 {
                     'content': p[content_key_map[p['type']]],
@@ -102,7 +66,7 @@ for p in posts:
             )
             break
 
-
+print(output_list)
 
 outputFileName = "output_got.csv"
 outputFile = codecs.open(outputFileName, "w+", "utf-8")
