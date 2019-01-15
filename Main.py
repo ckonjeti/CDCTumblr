@@ -78,15 +78,15 @@ content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 
            'audio': 'caption', 'video': 'caption', 'answer': 'answer'}
 output_list = []
 add_this_item = False
-or_tags = ['food', 'fit', 'weight', 'health', 'life']
+tumblrKeywords = [keywords[0]]
 
 for p in posts:
-    print(p)
-    print('--------------------------------------------')
-    for t in or_tags:
-        
-        if t in p['tags']:
-            
+#    print(p)
+#    print('--------------------------------------------')
+    for t in tumblrKeywords:
+        #print(repr(p[content_key_map[p['type']]])).encode('utf-8')
+        if t in (p[content_key_map[p['type']]]):
+            print(t)
             output_list.append(
                 {
                     'content': p[content_key_map[p['type']]],
@@ -98,6 +98,7 @@ for p in posts:
                     'post_url': p['post_url'],
                     'type': p['type']
                 }
+                
             )
             break
 
