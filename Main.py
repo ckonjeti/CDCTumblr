@@ -11,6 +11,7 @@ from datetime import datetime
 import csv
 import re
 import sys
+import codecs
 
 
 #reload(sys)
@@ -97,15 +98,35 @@ for p in posts:
             break
 
 
-# write the output to csv
 
+outputFileName = "output_got.csv"
+outputFile = codecs.open(outputFileName, "w+", "utf-8")
+dataWriter = csv.writer(outputFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+#dataWriter.writeheader()
+i=0
+for p in output_list:
+    row = [repr(s).encode("utf-8") for s in [keywords[i], p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
+    dataWriter.writerow(row)
+    i += 0
+        
+        #writer.writerow(repr(p))
+#        f.session.execute(p)
+#        f.session.commit()
+#tweetCriteria = got.manager.TweetCriteria().setQuerySearch(keywords[i]).setMaxTweets(5)
+#tweet = got.manager.TweetManager.getTweets(tweetCriteria)[j] 
+#row = [repr(s).encode("utf-8") for s in [keywords[i], p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
+##print(tweet)
+#dataWriter.writerow(row)
+
+# write the output to csv
 with open('output_data.csv', 'w') as csvfile:
     fieldnames = ['content', 'date', 'time', 'tags', 'id', 'blog_name', 'post_url', 'type']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
 
     writer.writeheader()
     for p in output_list:
-        print(p)
+        print(p['content'])
         print('--------------------------------')
         #writer.writerow(repr(p))
 #        f.session.execute(p)
