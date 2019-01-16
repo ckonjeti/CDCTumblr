@@ -9,12 +9,9 @@ import pytumblr
 import time
 from datetime import datetime
 import csv
-import sys
 import codecs
 import functions as f
-import unidecode
-
-
+      
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
@@ -26,7 +23,7 @@ keywords = [repr(s) for s in keywords]
 
 #Creates tumblr client
 client = pytumblr.TumblrRestClient(
-        'l3FxwH8VFOe3hFACwd5bXcM2A69eN40KQGYrK6MNMUjzfu07Ye',
+        'l3FxwH8VFOe3hFACwd5bXcM2A69eN40KQGYrK6MNMUjzfu07Ye', 
         'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
 posts = []
@@ -47,15 +44,21 @@ content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 
 output_list = []
 add_this_item = False
 
-print(repr(posts[0]).encode('utf-8').replace('\\x92',"'"))
+for p in posts:
+    print(p)
+    print('--------------------------------------------')
 
 for p in posts:
 #    print(p)
+    #print('--------------------------------------------')
+#    print(repr(p[content_key_map[p['type']]])).encode('utf-8')
+#    print(p['tags'])
 #    print('--------------------------------------------')
     for t in keywords:
-        #print(repr(p[content_key_map[p['type']]])).encode('utf-8')
-        ("--------------------------------------")
-        if t in (p[content_key_map[p['type']]]):
+        #print(t)
+        
+        #("--------------------------------------")
+        if t in (repr(p[content_key_map[p['type']]])):
             output_list.append(
                 {
                     'content': p[content_key_map[p['type']]],
@@ -70,7 +73,7 @@ for p in posts:
                 
             )
             break
-
+#print('-------------------------------------------------------')
 #print(output_list)
 
 outputFileName = "output_got.csv"
