@@ -27,13 +27,13 @@ client = pytumblr.TumblrRestClient(
         'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
 posts = []
-max_calls = 3
+max_calls = 5
 i = 0
 last_timestamp = int(time.time())
-for i in range(3):
+for i in range(5):
     for _ in range(max_calls):
         #print((keywords[i]).encode('utf-8').replace('\\x92',"'"))
-        posts.extend(client.tagged(keywords[i], limit=20, filter='text', before=last_timestamp))
+        posts.extend(client.tagged('depression', limit=20, filter='text', before=last_timestamp))
         #posts = [repr(s).encode('utf-8').replace('\\x92',"'") for s in posts]
         last_timestamp = posts[-1]['timestamp']
 
@@ -44,9 +44,7 @@ content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 
 output_list = []
 add_this_item = False
 
-for p in posts:
-    print(p)
-    print('--------------------------------------------')
+
 
 for p in posts:
 #    print(p)
