@@ -11,15 +11,19 @@ from datetime import datetime
 import csv
 import codecs
 import functions as f
-      
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
+import re
+
 
 #opens file and splits every word by the delimiter OR
-filename = "C:\Users\Chaitu Konjeti\CDCTweets\Keywords.txt"
+filename = "C:\Users\Chaitu Konjeti\CDCTumblr\Keywords.txt"
 
 keywords = f.sortKeyword(filename)
-keywords = [repr(s) for s in keywords]
+#keywords = [s.replace('"', '') for s in keywords]
+#keywords = [repr(s).encode('utf-8').replace('\\x92',"'") for s in keywords]
+#keywords = [s.replace('"', '') for s in keywords]
+#keywords = [s.encode('utf-8').replace('\\x92',"'") for s in keywords]
+#print(keywords)
+#keywords = [repr(s) for s in keywords]
 
 #Creates tumblr client
 client = pytumblr.TumblrRestClient(
@@ -27,23 +31,24 @@ client = pytumblr.TumblrRestClient(
         'q1u63mbjlfpw3KfOvWodNKXH9fS7owjezX0Nm5LgtBr0APTJUk'    
         )
 posts = []
-max_calls = 5
+max_calls = 1
 i = 0
 last_timestamp = int(time.time())
 for i in range(5):
     for _ in range(max_calls):
         #print((keywords[i]).encode('utf-8').replace('\\x92',"'"))
-        posts.extend(client.tagged('depression', limit=20, filter='text', before=last_timestamp))
+        posts.extend(client.tagged(keywords[i], limit=20, filter='text', before=last_timestamp))
         #posts = [repr(s).encode('utf-8').replace('\\x92',"'") for s in posts]
         last_timestamp = posts[-1]['timestamp']
 
+#print(posts)
 
 # massage the data into a consistent dictionary
 content_key_map = {'text': 'body', 'photo': 'caption', 'quote': 'text', 'link': 'description', 'chat': 'body',
            'audio': 'caption', 'video': 'caption', 'answer': 'answer'}
 output_list = []
 add_this_item = False
-
+#print(keywords)
 
 
 for p in posts:
@@ -74,14 +79,14 @@ for p in posts:
 #print('-------------------------------------------------------')
 #print(output_list)
 
-outputFileName = "output_got.csv"
+outputFileName = "Tumblr_BlogPosts.csv"
 outputFile = codecs.open(outputFileName, "w+", "utf-8")
 dataWriter = csv.writer(outputFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
 
 i = 0
 for p in output_list:
-    row = [repr(s).encode("utf-8") for s in [keywords[i], p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
+    row = [repr(s).encode("utf-8") for s in [p['content'],p['date'],p['time'],p['tags'],p['blog_name']]]
     dataWriter.writerow(row)
     i += 0
         
